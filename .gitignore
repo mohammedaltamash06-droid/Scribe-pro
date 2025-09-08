@@ -1,0 +1,36 @@
+# Next.js / Node
+.next/
+node_modules/
+out/
+.vercel/
+.turbo/
+dist/
+build/
+coverage/
+.cache/
+
+# Env & editor
+
+# remove local whisper code/models
+=======
+# env
+.env*
+!.env.example
+
+# build & caches
+.next
+dist
+build
+node_modules
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# models (do not commit)
+>>>>>>> feature/next-change
+whisper.cpp/
+*.gguf
+*.bin
+*.pt
