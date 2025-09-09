@@ -1,3 +1,9 @@
+'use client';
+
+console.log(
+  'BASE from code:',
+  process.env.NEXT_PUBLIC_TRANSCRIBE_BASE_URL
+);
 export async function uploadAudio(file: File) {
   // ✅ Browser-safe envs
   const BASE = process.env.NEXT_PUBLIC_TRANSCRIBE_BASE_URL;
