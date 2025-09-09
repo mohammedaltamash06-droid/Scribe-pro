@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { wakeTranscribe } from '@/utils/wakeTranscribe';
 import useFauxSmoothProgress from "@/hooks/useFauxSmoothProgress";
 
 // --- Helper Components ---
@@ -103,6 +104,7 @@ import { Play, Download, Mic, Upload, ExternalLink, AlertCircle, RotateCcw } fro
 import { useToast } from "@/hooks/use-toast";
 
 export default function TranscribePage() {
+  useEffect(() => { wakeTranscribe(); }, []);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLElement>(null);
   const rightInnerRef = useRef<HTMLDivElement>(null);
