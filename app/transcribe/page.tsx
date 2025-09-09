@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { wakeTranscribe } from '@/src/utils/wakeTranscribe';
 import { uploadAudio } from '@/src/utils/TranscribeClient';
@@ -14,10 +15,9 @@ function AudioCard(props: AudioCardProps) {
       const url = URL.createObjectURL(uploadedFile);
       setAudioUrl(url);
       return () => URL.revokeObjectURL(url);
-    } else {
-      setAudioUrl("");
     }
   }, [uploadedFile]);
+
   return (
     <section className="rounded-2xl border bg-card text-card-foreground shadow-sm p-4">
       <h3 className="text-sm font-semibold mb-2">Audio Player</h3>
@@ -76,9 +76,10 @@ function TranscriptCard(props: TranscriptCardProps) {
         (() => {
           const joined = (transcript ?? [])
             .map((l: any) => (typeof l === "string" ? l : l?.text ?? ""))
-            .join("\n");
+            .join("\n")
+            .replace(/^\s+/gm, "");
           return (
-            <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-800 font-mono bg-slate-50 rounded-lg p-3 h-full flex-1 min-h-0">
+            <pre className="whitespace-pre-wrap text-sm text-slate-700 bg-white p-3 rounded-lg border flex-1 min-h-0 overflow-auto">
               {joined}
             </pre>
           );
@@ -87,7 +88,7 @@ function TranscriptCard(props: TranscriptCardProps) {
     </section>
   );
 }
-import Link from "next/link";
+// ...rest of the provided code...
 import { Navigation } from "@/components/ui/navigation";
 import { UploadDropzone } from "@/components/transcribe/UploadDropzone";
 import { AudioPlayer } from "@/components/transcribe/AudioPlayer";
@@ -295,41 +296,13 @@ export default function TranscribePage() {
   setTranscriptLines([]);
   setErrorMessage("");
   try {
-    // Create job
-    const doctor = doctorId.trim() || "demo";
-    const jobResponse = await fetch('/api/jobs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ doctorId: doctor })
-    });
-    if (!jobResponse.ok) {
-      const err = await jobResponse.json().catch(() => ({}));
-      throw new Error(`Failed to create job: ${err.detail ?? jobResponse.statusText}`);
-    }
-    const jobData = await jobResponse.json();
-    setJobId(jobData.jobId);
-
-    // 1) upload
-    const fd = new FormData();
-    fd.append("file", uploadedFile);
-    const up = await fetch(`/api/jobs/${jobData.jobId}/upload`, { method: "POST", body: fd });
-    if (!up.ok) {
-      const err = await up.json().catch(() => ({}));
-      throw new Error(`Upload failed: ${err.error ?? up.statusText}`);
-    }
-
-    // 2) process and WAIT for it to finish
-    const processRes = await fetch(`/api/jobs/${jobData.jobId}/process`, { method: "POST" });
-    const body = await processRes.json().catch(() => ({}));
-    if (!processRes.ok) {
-      throw new Error(body?.error ? `Transcribe failed — ${body.error}${body?.detail ? `: ${body.detail}` : ""}` : "Transcribe failed");
-    }
-
-    // 3) Only AFTER process succeeds, set job status to running
-    setJobStatus("running");
+    const result = await uploadAudio(uploadedFile);
+    setJobStatus('done');
+    setProgress(100);
+    setTranscriptLines(result.segments?.map((s: any) => s.text) || [result.text] || []);
     toast({
-      title: "Transcription Started",
-      description: "Processing your audio file..."
+      title: "Transcription Complete",
+      description: "Your transcript is ready for review."
     });
   } catch (error) {
     console.error('Transcription error:', error);
