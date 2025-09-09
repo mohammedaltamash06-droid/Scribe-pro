@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Navigation } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +12,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { LogIn, Shield, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Toaster from "@/src/components/ui/sonner";
 
 export default function LoginPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -34,7 +37,7 @@ export default function LoginPage() {
           title: "Login Successful",
           description: "Welcome to the medical transcription system",
         });
-        // In real app, redirect to dashboard
+        router.push("/dashboard");
       } else {
         setError("Invalid email or password. Try demo@medical.com / demo123");
       }
@@ -49,7 +52,6 @@ export default function LoginPage() {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 space-y-6">
         <Navigation />
-        
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
           <Card className="w-full max-w-md rounded-xl shadow-large">
             <CardHeader className="text-center space-y-4">
@@ -68,14 +70,12 @@ export default function LoginPage() {
                 HIPAA Compliant
               </Badge>
             </CardHeader>
-            
             <CardContent className="space-y-6">
               {error && (
                 <Alert variant="destructive" className="rounded-lg">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
@@ -89,7 +89,6 @@ export default function LoginPage() {
                     className="focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   />
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
@@ -117,7 +116,6 @@ export default function LoginPage() {
                     </Button>
                   </div>
                 </div>
-
                 <Button
                   type="submit"
                   className="w-full bg-gradient-primary hover:opacity-90 shadow-medium"
@@ -136,12 +134,10 @@ export default function LoginPage() {
                   )}
                 </Button>
               </form>
-
               <div className="text-center space-y-4">
                 <p className="text-sm text-muted-foreground">
                   Demo credentials: demo@medical.com / demo123
                 </p>
-                
                 <div className="flex items-center justify-center space-x-2 text-sm">
                   <span className="text-muted-foreground">New to the platform?</span>
                   <Link 
@@ -157,6 +153,7 @@ export default function LoginPage() {
           </Card>
         </div>
       </div>
+      <Toaster />
     </main>
   );
 }

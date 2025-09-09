@@ -41,10 +41,14 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    ".next",
-    "dist",
-    "build",
-    "dev"
+  "node_modules",
+  ".next",
+  "dist",
+  "build",
+  // Legacy React Router code we do NOT want Next to build
+  "legacy/**",
+  "src/App.tsx",
+  "src/pages/**/*",
+  "src/components/ui/navigation.tsx"
   ]
 }
