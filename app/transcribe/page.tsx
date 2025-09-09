@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { wakeTranscribe } from '@/utils/wakeTranscribe';
+import { wakeTranscribe } from '@/src/utils/wakeTranscribe';
+import { uploadAudio } from '@/src/utils/TranscribeClient';
 import useFauxSmoothProgress from "@/hooks/useFauxSmoothProgress";
 
 // --- Helper Components ---
