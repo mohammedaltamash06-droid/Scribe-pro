@@ -15,8 +15,8 @@ export async function uploadAudio(file: File) {
   const form = new FormData();
   form.append("file", file);
 
-  // wake Render free tier (optional)
-  await fetch(`${BASE}/health`).catch(() => {});
+  // Wake backend (no-op if already warm)
+  try { await fetch(`${BASE}/health`, { cache: 'no-store' }); } catch {}
 
   const res = await fetch(`${BASE}/transcribe`, {
     method: "POST",
@@ -24,6 +24,9 @@ export async function uploadAudio(file: File) {
     body: form,
   });
 
-  if (!res.ok) throw new Error(`Transcribe failed: ${res.status}`);
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`Transcribe failed: ${res.status} ${txt}`);
+  }
   return res.json();
 }
